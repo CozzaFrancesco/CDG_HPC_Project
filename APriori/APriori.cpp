@@ -34,7 +34,7 @@ TransactionDB read_csv(const string& filename) {
 
         transactions.push_back(transaction);
     }
-    cout << "Lettura file completata! \n";
+    cout << "Lettura file completata! \nInizio versione sequenziale dell'algoritmo APriori ...";
     return transactions;
 }
 
@@ -141,20 +141,22 @@ int main() {
     int min_support = 50;
 
     auto start = high_resolution_clock::now();
-    vector<Itemset> result = apriori(transactions, min_support);
+    vector<Itemset> results = apriori(transactions, min_support);
     auto stop = high_resolution_clock::now();
     
     auto duration = duration_cast<milliseconds>(stop - start);
 
     cout << "Tempo di esecuzione APriori Classico: " << duration.count() << " ms" << endl;
 
-    cout << "Itemsets Frequenti:" << endl;
-    for (const auto& itemset : result) {
-        cout << "{";
-        for (const string& item : itemset) {
-            cout << item << ", ";
+    ofstream outfile("C:/Users/franc/Desktop/Uni/HPC/sequentialResult.txt");
+    for (const auto& result : results) {
+        outfile << "Frequent itemset: ";
+        for (const string& item : result) {
+            outfile << item << ", ";
         }
-        cout << "}\n";
+        outfile  <<  endl;
     }
+
+    outfile.close();
     return 0;
 }

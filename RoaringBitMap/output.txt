@@ -1,0 +1,9 @@
+apple,3
+banana,3
+grape;;;;,3
+;;;;,3
+Frequent itemset: apple banana , Support: 3
+Frequent itemset: banana grape;;;; , Support: 3
+Frequent itemset: apple grape;;;; , Support: 3
+Frequent itemset: apple banana grape;;;; , Support: 3
+Frequent itemset: apple banana grape;;;; , Support: 3
