@@ -18,25 +18,29 @@ using FrequencyMap = map<Itemset, int>;
 
 // Funzione per leggere il file CSV e creare il database delle transazioni
 TransactionDB read_csv(const string& filename) {
-    TransactionDB transactions;
-    ifstream file(filename);
+    ifstream infile(filename);
+    TransactionDB dataset;
     string line;
     regex pattern("'([^']*)'");
 
-    while (getline(file, line)) {
+    while (getline(infile, line)) {
         Itemset transaction;
         sregex_iterator iter(line.begin(), line.end(), pattern);
         sregex_iterator end;
 
         for (; iter != end; ++iter) {
-            transaction.insert((*iter)[1].str());   
+            string item = (*iter)[1].str();
+            transform(item.begin(), item.end(), item.begin(), ::tolower); // conversione in lowercase
+            transaction.insert(item);
         }
 
-        transactions.push_back(transaction);
+        dataset.push_back(transaction);
     }
+
     cout << "Lettura file completata! \nInizio versione sequenziale dell'algoritmo APriori ...";
-    return transactions;
+    return dataset;
 }
+
 
 
 // Funzione per generare gli itemsets candidati di dimensione k+1
@@ -135,7 +139,7 @@ vector<Itemset> apriori(const TransactionDB& transactions, int min_support) {
 
 int main() {
 
-    string filename = "C:/Users/franc/Desktop/Uni/HPC/Retail_Transactions_Dataset_onlyProducts.csv";
+    string filename = "C:/Users/franc/Desktop/Uni/HPC/Input/input_50000.csv";
     TransactionDB transactions = read_csv(filename);
 
     int min_support = 50;
@@ -148,7 +152,7 @@ int main() {
 
     cout << "Tempo di esecuzione APriori Classico: " << duration.count() << " ms" << endl;
 
-    ofstream outfile("C:/Users/franc/Desktop/Uni/HPC/sequentialResult.txt");
+    ofstream outfile("C:/Users/franc/Desktop/Uni/HPC/Results/sequentialResult.txt");
     for (const auto& result : results) {
         outfile << "Frequent itemset: ";
         for (const string& item : result) {

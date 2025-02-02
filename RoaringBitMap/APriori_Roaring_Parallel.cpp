@@ -16,6 +16,7 @@ using namespace std::chrono;
 using Itemset = set<string>;
 using TransactionDB = vector<Itemset>;
 
+
 TransactionDB read_csv(const string& filename) {
     ifstream infile(filename);
     TransactionDB dataset;
@@ -28,15 +29,17 @@ TransactionDB read_csv(const string& filename) {
         sregex_iterator end;
 
         for (; iter != end; ++iter) {
-            transaction.insert((*iter)[1].str());
+            string item = (*iter)[1].str();
+            transform(item.begin(), item.end(), item.begin(), ::tolower); // conversione in lowercase
+            transaction.insert(item);
         }
 
         dataset.push_back(transaction);
     }
-    cout << "Lettura file completata! \nInizio versione con Roaring BitMap e OpenMP dell'algoritmo APriori ..."<<endl;
-
+    cout << "Lettura file completata! \nInizio versione con Roaring BitMap e OpenMP dell'algoritmo APriori ..." << endl;
     return dataset;
 }
+
 
 uint64_t calculate_support(const roaring::Roaring& bitmap) {
     return bitmap.cardinality();
@@ -127,7 +130,7 @@ vector<pair<Itemset, int>> apriori_roaring_bitmap(const TransactionDB& dataset, 
 
 int main() {
     int minsup = 50;
-    auto dataset = read_csv("C:/Users/franc/Desktop/Uni/HPC/Retail_Transactions_Dataset_onlyProducts.csv");
+    auto dataset = read_csv("C:/Users/franc/Desktop/Uni/HPC/Input/input_25000.csv");
     
     auto start = high_resolution_clock::now();
     vector<pair<Itemset,int>> results = apriori_roaring_bitmap(dataset, minsup);
@@ -136,7 +139,7 @@ int main() {
     auto duration = duration_cast<milliseconds>(stop - start);
     
 
-    ofstream outfile("C:/Users/franc/Desktop/Uni/HPC/roaringBitMapResult.txt");
+    ofstream outfile("C:/Users/franc/Desktop/Uni/HPC/Results/roaringBitMapResult.txt");
     for (const auto& result : results) {
         outfile << "Frequent itemset: ";
         for (const auto& item : result.first) {
